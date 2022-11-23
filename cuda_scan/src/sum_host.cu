@@ -2,7 +2,7 @@
 #include <gpuerrors.h>
 #include <sum_kernels.h>
 
-typedef void (*sum_kernel)(const float *summands, const int n);
+typedef void (*sum_kernel)(const float *, const int, float *);
 
 void timed_sum_kernel_call(
     const sum_kernel,
@@ -25,8 +25,8 @@ void timed_sum_kernel_call(
     HANDLE_ERROR(cudaEventRecord(start, 0));
 
     // call kernel
-    sum_kernel<<<blocks_per_grid, threads_per_block, shared_memory_bytes>>>(summands, n, gpu_result)
-        CudaCheckError();
+    sum_kernel<<<blocks_per_grid, threads_per_block, shared_memory_bytes>>>(gpu_summands, n, gpu_result);
+    CudaCheckError();
 
     // record finish time
     HANDLE_ERROR(cudaEventRecord(stop, 0));
@@ -60,7 +60,8 @@ float sum_par_scan_cu(const float *summands, const int n)
     HANDLE_ERROR(cudaFuncSetAttribute(sum_par_scan, cudaFuncAttributeMaxDynamicSharedMemorySize, shared_memory_bytes));
 
     // call kernel
-    timed_sum_kernel_call(*sum_par_scan, gpu_summands, n, gpu_result, blocks_per_grid, threads_per_block, shared_memory_bytes);
+    sum_kernel sk = sum_par_scan;
+    timed_sum_kernel_call(sk, gpu_summands, n, gpu_result, blocks_per_grid, threads_per_block, shared_memory_bytes);
 
     // copy result from gpu to host
     HANDLE_ERROR(cudaMemcpy(&result, gpu_result, sizeof(float), cudaMemcpyDeviceToHost));
