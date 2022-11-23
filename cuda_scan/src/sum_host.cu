@@ -2,7 +2,7 @@
 #include <gpuerrors.h>
 #include <sum_kernels.h>
 
-float sum_par_scan_cu(const float *summands, const int n)
+float sum_par_scan_cu(const float *summands, const int n, const int num_threads)
 {
     // declare pointers to gpu data
     float *gpu_summands;
@@ -19,9 +19,9 @@ float sum_par_scan_cu(const float *summands, const int n)
     // define grid size (not needed here, so set to 1)
     dim3 blocks_per_grid(1);
 
-    // use as many threads as possible, 1024 is max per bock
-    dim3 threads_per_block(1024);
-    int shared_memory_bytes(1024 * sizeof(float));
+    // set number of threads (1024 should be ideal)
+    dim3 threads_per_block(num_threads);
+    int shared_memory_bytes(num_threads * sizeof(float));
 
     // allow passing shared memory size through kernel call
     HANDLE_ERROR(cudaFuncSetAttribute(sum_par_scan, cudaFuncAttributeMaxDynamicSharedMemorySize, shared_memory_bytes));
@@ -65,7 +65,7 @@ int highestPowerof2(int n)
     return res;
 }
 
-float sum_par_cu(const float *summands, const int n)
+float sum_par_cu(const float *summands, const int n, const int num_threads)
 {
     // declare pointers to gpu data
     float *gpu_summands;
@@ -80,12 +80,12 @@ float sum_par_cu(const float *summands, const int n)
     // define grid size (not needed here, so set to 1)
     dim3 blocks_per_grid(1);
 
-    // find optimal number of threads (should be power of 2 and close to sqrt(n))
-    int num_threads = highestPowerof2(sqrt(n));
-    if (num_threads > 1024)
-    {
-        num_threads = 1024;
-    }
+    // this would find optimal number of threads (should be power of 2 and close to sqrt(n))
+    // int num_threads = highestPowerof2(sqrt(n));
+    // if (num_threads > 1024)
+    // {
+    //     num_threads = 1024;
+    // }
 
     // set number of threads
     dim3 threads_per_block(num_threads);

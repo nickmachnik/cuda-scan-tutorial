@@ -5,34 +5,42 @@
 
 const std::string PAR_SCAN_USAGE = R"(
 usage: parsum par_scan
+
+args:
+    num_threads     number of threads used to compute sum
 )";
 
 void par_scan(int argc, char *argv[])
 {
     // check for correct number of args
-    if (argc != 2)
+    if (argc != 3)
     {
         std::cout << PAR_SCAN_USAGE << std::endl;
         exit(1);
     }
 
-    std::cout << sum_par_scan_cu(test_data, TEST_DATA_SIZE) << std::endl;
+    int num_threads = stoi((std::string)argv[2]);
+    std::cout << sum_par_scan_cu(test_data, TEST_DATA_SIZE, num_threads) << std::endl;
 }
 
 const std::string PAR_USAGE = R"(
 usage: parsum par
+
+args:
+    num_threads     number of threads used to compute sum
 )";
 
 void par(int argc, char *argv[])
 {
     // check for correct number of args
-    if (argc != 2)
+    if (argc != 3)
     {
         std::cout << PAR_USAGE << std::endl;
         exit(1);
     }
 
-    std::cout << sum_par_cu(test_data, TEST_DATA_SIZE) << std::endl;
+    int num_threads = stoi((std::string)argv[2]);
+    std::cout << sum_par_cu(test_data, TEST_DATA_SIZE, num_threads) << std::endl;
 }
 
 const std::string MPS_USAGE = R"(
