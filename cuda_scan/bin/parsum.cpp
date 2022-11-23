@@ -1,51 +1,46 @@
-#include <array>
+#include <iostream>
 #include <string>
+#include <sum_host.h>
+#include <test_data.h>
 
-const std::string PAR_USAGE = R"(
-usage: mps par <file>
-
-arguments:
-
+const std::string PAR_SCAN_USAGE = R"(
+usage: parsum par_scan
 )";
 
-void par(int argc, char *argv[])
+void par_scan(int argc, char *argv[])
 {
     // check for correct number of args
-    if (argc != 3)
+    if (argc != 2)
     {
-        std::cout << PAR_USAGE << std::endl;
+        std::cout << PAR_SCAN_USAGE << std::endl;
         exit(1);
     }
+
+    std::cout << sum_par_scan_cu(test_data, TEST_DATA_SIZE) << std::endl;
 }
 
 const std::string PAR_USAGE = R"(
-usage: mps par <file>
-
-arguments:
-
+usage: parsum par
 )";
 
 void par(int argc, char *argv[])
 {
     // check for correct number of args
-    if (argc != 3)
+    if (argc != 2)
     {
         std::cout << PAR_USAGE << std::endl;
         exit(1);
     }
+
+    std::cout << sum_par_cu(test_data, TEST_DATA_SIZE) << std::endl;
 }
 
 const std::string MPS_USAGE = R"(
-usage: mps <command> [<args>]
+usage: parsum <command> [<args>]
 
 commands:
-    printbf Interpret contents of binary file as floats and print to stoud
-    prep    Prepare input (PLINK) .bed file for mps
-    scorr   Compute the marker/phenotype correlation matrix in sparse format
-    corr    Compute the marker/phenotype correlation matrix
-    mcorrk  Compute pearson correlations between markers as sin(pi / 2 tau_b)
-    mcorrp  Compute pearson correlations between markers
-    cups    use cuPC to compute the parent set for each phenotype
+    par_scan    compute sum of test data using the par+scan algorithm on 1024 threads
+    par         compute sum of test data using the par algorithm on 64 threads
 
 contact:
     nick.machnik@gmail.com
@@ -65,11 +60,11 @@ auto main(int argc, char *argv[]) -> int
     {
         std::cout << MPS_USAGE << std::endl;
     }
-    else if (cmd == "prep")
+    else if (cmd == "par")
     {
         par(argc, argv);
     }
-    else if (cmd == "corr")
+    else if (cmd == "par_scan")
     {
         par_scan(argc, argv);
     }

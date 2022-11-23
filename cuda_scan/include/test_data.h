@@ -1,3 +1,5 @@
+#pragma once
+
 #define TEST_DATA_SIZE 10000
 
 // sum of this should be 94.48023557958338
