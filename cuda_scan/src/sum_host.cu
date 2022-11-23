@@ -86,7 +86,6 @@ float sum_par_cu(const float *summands, const int n)
     {
         num_threads = 1024;
     }
-    num_threads = 1024;
 
     // set number of threads
     dim3 threads_per_block(num_threads);
