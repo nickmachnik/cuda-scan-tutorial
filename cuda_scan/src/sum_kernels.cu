@@ -1,16 +1,18 @@
+#include <stdio.h>
+
 // compute sum of input vector using the par + scan algorithm
 __global__ void sum_par_scan(
     const float *summands,
     const int num_summands,
     float *result)
 {
-    int tix = threadId.x;
+    int tix = threadIdx.x;
     int num_threads = blockDim.x;
     // divide summands into sections
     const int num_sections = (num_summands + num_threads - 1) / num_threads;
 
     // --- compute par bit ---
-    __shared_ float thread_sums[num_threads];
+    extern __shared__ float thread_sums[];
     float thread_sum = 0.0;
     int vix = 0;
 
@@ -44,10 +46,10 @@ __global__ void sum_par_scan(
         __syncthreads();
     }
 
-    if (tx == 0)
+    if (tix == 0)
     {
         float s = thread_sums[num_threads - 1];
-        *results = s;
+        *result = s;
     }
 }
 
@@ -57,13 +59,13 @@ __global__ void sum_par(
     const int num_summands,
     float *result)
 {
-    int tix = threadId.x;
+    int tix = threadIdx.x;
     int num_threads = blockDim.x;
     // divide summands into sections
     const int num_sections = (num_summands + num_threads - 1) / num_threads;
 
     // --- compute par bit ---
-    __shared_ float thread_sums[num_threads];
+    extern __shared__ float thread_sums[];
     float thread_sum = 0.0;
     int vix = 0;
 
@@ -89,6 +91,6 @@ __global__ void sum_par(
             s += thread_sums[i];
         }
 
-        *results = s;
+        *result = s;
     }
 }
