@@ -43,7 +43,7 @@ float sum_par_scan_cu(const float *summands, const int n)
     HANDLE_ERROR(cudaEventRecord(stop, 0));
     HANDLE_ERROR(cudaEventSynchronize(stop));
     HANDLE_ERROR(cudaEventElapsedTime(&time, start, stop));
-    printf("Kernel call time:  %3.1f ms \n", time);
+    printf("Kernel call time:  %3.5f ms \n", time);
 
     // copy result from gpu to host
     HANDLE_ERROR(cudaMemcpy(&result, gpu_result, sizeof(float), cudaMemcpyDeviceToHost));
@@ -114,7 +114,7 @@ float sum_par_cu(const float *summands, const int n)
     HANDLE_ERROR(cudaEventRecord(stop, 0));
     HANDLE_ERROR(cudaEventSynchronize(stop));
     HANDLE_ERROR(cudaEventElapsedTime(&time, start, stop));
-    printf("Kernel call time:  %3.1f ms \n", time);
+    printf("Kernel call time:  %3.5f ms \n", time);
 
     HANDLE_ERROR(cudaMemcpy(&result, gpu_result, sizeof(float), cudaMemcpyDeviceToHost));
     return result;
